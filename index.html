@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>N8 Studios | Your Identity, Engineered.</title>
 <meta name="description" content="N8 Studios builds premium digital identities — bespoke portfolios, brand systems, and digital products for founders who move fast.">
+<link rel="icon" type="image/png" href="./assets/logo/logo.png?v=2">
+<link rel="shortcut icon" type="image/png" href="./assets/logo/logo.png?v=2">
+<link rel="apple-touch-icon" href="./assets/logo/logo.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -43,8 +46,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;}
 /* NAV */
 nav{min-height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:transparent;transition:all .4s ease;}
 nav.scrolled{background:rgba(8,8,16,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 var(--border);}
-.nav-logo{flex-shrink:0;font-family:var(--font-mono);font-weight:500;font-size:.82rem;letter-spacing:.14em;color:var(--fg);padding:.45rem .9rem;border:1px solid var(--border);border-radius:4px;text-transform:uppercase;}
-.nav-logo .ac{color:var(--accent);}
+.nav-logo{display:inline-flex;align-items:center;gap:0.7rem;flex-shrink:0;font-family:var(--font-mono);font-weight:600;font-size:.82rem;letter-spacing:.14em;background:#e2e8f0;color:var(--bg);padding:0 .9rem 0 0;border-radius:4px;text-transform:uppercase;height:38px;overflow:hidden;}
+.nav-logo-img{height:100%;width:auto;object-fit:contain;border-radius:4px 0 0 4px;}
 .nav-links{display:none;align-items:center;gap:2.5rem;margin:0;padding:0;}
 .nav-links a{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--fg2);transition:color .3s;position:relative;}
 .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width .3s;}
@@ -336,7 +339,7 @@ footer{background:#050508;padding:3rem 5vw 2rem;border-top:1px solid var(--borde
   <a href="#contact" class="glitch-hover">Contact</a>
 </div>
 <nav id="mainNav">
-  <div class="nav-logo glitch-hover magnetic">N<span class="ac">8</span> STUDIOS</div>
+  <div class="nav-logo"><img src="./assets/logo/logo.png" alt="N8 Logo" class="nav-logo-img"><span class="glitch-hover">STUDIOS</span></div>
   <ul class="nav-links">
     <li><a href="#about" class="glitch-hover magnetic">About</a></li>
     <li><a href="#services" class="glitch-hover magnetic">Services</a></li>
@@ -390,7 +393,7 @@ footer{background:#050508;padding:3rem 5vw 2rem;border-top:1px solid var(--borde
 </div>
 <section class="s-pad" id="about"><div class="s-inner"><div class="about-grid">
   <div class="reveal"><span class="tag-label mono">[ WHAT WE DO ]</span>
-    <h2 class="h-md glitch-hover">We don't make pretty things.<br>We build identities that work.</h2>
+    <h2 class="h-md"><span class="glitch-hover">We don't make pretty things.</span><br><span class="glitch-hover">We build identities that work.</span></h2>
     <p style="margin-top:1.5rem;">We architect visual systems, digital presences, and brand identities that work as hard as the people behind them. Every project is bespoke. Every output is built to convert.</p></div>
   <div class="disc-chips reveal d2">
     <div class="chip"><div class="chip-icon">◈</div><h4 class="chip-title">Design Systems</h4><p class="chip-desc">Scalable visual architecture</p></div>
@@ -525,11 +528,18 @@ $$('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.qu
 
 // === GLITCH TEXT ===
 const gC='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%';
+const glObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){setTimeout(()=>e.target._runGlitch(),200+Math.random()*400);glObs.unobserve(e.target);}});},{threshold:0.1});
 $$('.glitch-hover').forEach(el=>{const orig=el.textContent;let iv=null;
-el.addEventListener('mouseenter',()=>{if(!isD())return;clearInterval(iv);let it=0;const st=orig.length/8;
+el._runGlitch=()=>{if(el.dataset.gl)return;el.dataset.gl='1';
+const r=el.getBoundingClientRect();el.style.width=r.width+'px';el.style.height=r.height+'px';
+if(window.getComputedStyle(el).display==='inline')el.style.display='inline-block';
+el.style.overflow='hidden';
+clearInterval(iv);let it=0;const st=Math.max(orig.length/10,0.5);
 iv=setInterval(()=>{el.textContent=orig.split('').map((c,i)=>{if(c===' ')return' ';if(i<it)return orig[i];return gC[Math.floor(Math.random()*gC.length)];}).join('');
-it+=st;if(it>=orig.length){clearInterval(iv);el.textContent=orig;}},75);});
-el.addEventListener('mouseleave',()=>{clearInterval(iv);el.textContent=orig;});});
+it+=st;if(it>=orig.length){clearInterval(iv);el.textContent=orig;el.style.width='';el.style.height='';el.style.display='';el.style.overflow='';delete el.dataset.gl;}},45);};
+el.addEventListener('mouseenter',()=>{if(isD())el._runGlitch();});
+el.addEventListener('mouseleave',()=>{clearInterval(iv);el.textContent=orig;el.style.width='';el.style.height='';el.style.display='';el.style.overflow='';delete el.dataset.gl;});
+glObs.observe(el);});
 
 // === SCROLL REVEAL ===
 const rObs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');rObs.unobserve(e.target);}});},{threshold:.1});
@@ -708,6 +718,22 @@ W.addEventListener('resize',()=>{cam.aspect=W.innerWidth/W.innerHeight;cam.updat
     });
   });
 })();
+
+// === DYNAMIC FAVICON (FLURO BG) ===
+const dynFav=()=>{
+  const c=document.createElement('canvas'),x=c.getContext('2d'),i=new Image();
+  i.src='./assets/logo/logo.png';
+  i.onload=()=>{
+    c.width=i.width;c.height=i.height;
+    x.fillStyle='#e2e8f0';
+    x.fillRect(0,0,c.width,c.height);
+    const s=1.35, sw=c.width*s, sh=c.height*s, ox=(c.width-sw)/2, oy=(c.height-sh)/2;
+    x.drawImage(i,ox,oy,sw,sh);
+    const d=c.toDataURL('image/png');
+    document.querySelectorAll('link[rel="icon"],link[rel="shortcut icon"],link[rel="apple-touch-icon"]').forEach(l=>l.href=d);
+  };
+};
+if(document.readyState==='complete')dynFav();else window.addEventListener('load',dynFav);
 
 })();
 
